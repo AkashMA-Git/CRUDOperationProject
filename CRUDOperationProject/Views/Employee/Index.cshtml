@@ -1,4 +1,5 @@
-﻿@model List<Employee>
+﻿@model CRUDOperationProject.Controllers.EmployeeController.PaginatedList<CRUDOperationProject.Models.Employee>
+
 
 <div class="container">
 
@@ -10,20 +11,28 @@
         </div>
        
     </div>
+
+    <form asp-action="Index" method="get">
+        <p>
+            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" />
+        </p>
+    </form>
+
     <div class="table-responsive"> 
     <table class="table table-bordered table-striped">
 
         <thead >
             <tr>
                 <th>
-                    Name
-                </th>
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSort"]">Name</a>
+                 </th>
                 <th>
                     Email
                 </th>
                 <th>
-                    Date of Birth
-                </th>
+                     <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSort"]">Date of Birth</a>
+                 </th>
                 <th>
                     Gender
                 </th>
@@ -76,5 +85,18 @@
         </tbody>
 
     </table>
+    </div>
+
+    <div class="pagination">
+        <nav aria-label="...">
+            <ul class="pagination">
+                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                    <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" asp-route-sortOrder="@ViewData["CurrentSort"]">Previous</a>
+                </li>
+                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                    <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" asp-route-sortOrder="@ViewData["CurrentSort"]">Next</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>

@@ -1,21 +1,62 @@
 ﻿using CRUDOperationProject.Entity;
 using CRUDOperationProject.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CRUDOperationProject.Controllers
 {
     public class EmployeeController : Controller
-    {   
+    {
         private readonly EntityDbContext _context;
         public EmployeeController(EntityDbContext context)
         {
             _context = context;
         }
-        public IActionResult Index()
+        public IActionResult Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-            List<Employee> employeeList = _context.Employees.ToList();
-            return View(employeeList);
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSort"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["DateSort"] = sortOrder == "Date" ? "date_desc" : "Date";
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+            IQueryable<Employee> employeeQuery = _context.Employees;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                employeeQuery = employeeQuery.Where(s => s.Name.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    employeeQuery = employeeQuery.OrderByDescending(s => s.Name);
+                    break;
+                case "Date":
+                    employeeQuery = employeeQuery.OrderBy(s => s.DateOfBirth);
+                    break;
+                case "date_desc":
+                    employeeQuery = employeeQuery.OrderByDescending(s => s.DateOfBirth);
+                    break;
+                default:
+                    employeeQuery = employeeQuery.OrderBy(s => s.Name);
+                    break;
+            }
+
+            int pageSize = 5;
+            return View(PaginatedList<Employee>.Create(employeeQuery.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
+
+
+    
         public IActionResult Create() { 
             return View();
         }
@@ -97,6 +138,43 @@ namespace CRUDOperationProject.Controllers
             return RedirectToAction("Index");
             
             
+        }
+
+        public class PaginatedList<T> : List<T>
+        {
+            public int PageIndex { get; private set; }
+            public int TotalPages { get; private set; }
+
+            public PaginatedList(List<T> items, int count, int pageIndex, int pageSize)
+            {
+                PageIndex = pageIndex;
+                TotalPages = (int)Math.Ceiling(count / (double)pageSize);
+
+                this.AddRange(items);
+            }
+
+            public bool HasPreviousPage
+            {
+                get
+                {
+                    return (PageIndex > 1);
+                }
+            }
+
+            public bool HasNextPage
+            {
+                get
+                {
+                    return (PageIndex < TotalPages);
+                }
+            }
+
+            public static PaginatedList<T> Create(IQueryable<T> source, int pageIndex, int pageSize)
+            {
+                var count = source.Count();
+                var items = source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                return new PaginatedList<T>(items, count, pageIndex, pageSize);
+            }
         }
 
 
