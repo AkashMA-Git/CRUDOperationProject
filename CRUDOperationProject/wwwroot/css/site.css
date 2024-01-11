@@ -20,3 +20,22 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+
+.img-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.image {
+    width: 500px;
+    height: 500px;
+    object-fit: contain;
+}
+
+.img-text {
+    width: 50%; 
+    padding: 30px;
+}
+    
