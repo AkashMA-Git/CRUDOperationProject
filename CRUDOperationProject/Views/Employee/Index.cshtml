@@ -9,6 +9,12 @@
                 Employee List
             </h2>
         </div>
+        <div class="col-6 d-flex justify-content-end align-items-center">
+            <a class="nav-link text-primary ml-4 py-2 px-3 rounded-pill bg-light" asp-controller="Employee" asp-action="Create" style="font-size: 16px;">
+                <i class="bi bi-person-fill-add mr-2"></i>Create New Employee
+            </a>
+        </div>
+
        
     </div>
 
@@ -24,6 +30,9 @@
 
         <thead >
             <tr>
+                <th>
+                    Sl.No
+                </th>
                 <th>
                     <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSort"]">Name</a>
                  </th>
@@ -50,7 +59,10 @@
         <tbody>
             @foreach (var obj in Model)
             {
-                <tr>
+                <tr><td>
+                      @obj.Id
+                      
+                    </td>
                     <td>
                         @obj.Name
                     </td>
@@ -78,6 +90,10 @@
                                 <a asp-controller="Employee" asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger mx-2">
                                 <i class="bi bi-trash3"></i> Delete
                         </a>
+
+                                <a asp-controller="Employee" asp-action="View" asp-route-id="@obj.Id" class="btn btn-dark mx-2">
+                                    <i class="bi bi-trash3"></i> View
+                                </a>
                         </div>
                     </td>
                 </tr>

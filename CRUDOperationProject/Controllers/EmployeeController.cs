@@ -15,8 +15,14 @@ namespace CRUDOperationProject.Controllers
         public IActionResult Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
-            ViewData["NameSort"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+           ViewData["NameSort"] = String.IsNullOrEmpty(sortOrder) ? "name_asc" : "";
             ViewData["DateSort"] = sortOrder == "Date" ? "date_desc" : "Date";
+
+
+            if (String.IsNullOrEmpty(sortOrder))
+            {
+                sortOrder = "newest_first";
+            }
 
             if (searchString != null)
             {
@@ -37,8 +43,8 @@ namespace CRUDOperationProject.Controllers
 
             switch (sortOrder)
             {
-                case "name_desc":
-                    employeeQuery = employeeQuery.OrderByDescending(s => s.Name);
+                case "name_asc":
+                    employeeQuery = employeeQuery.OrderBy(s => s.Name);
                     break;
                 case "Date":
                     employeeQuery = employeeQuery.OrderBy(s => s.DateOfBirth);
@@ -46,8 +52,10 @@ namespace CRUDOperationProject.Controllers
                 case "date_desc":
                     employeeQuery = employeeQuery.OrderByDescending(s => s.DateOfBirth);
                     break;
+                case "newest_first": 
+                    employeeQuery = employeeQuery.OrderByDescending(s => s.Id); 
+                    break;
                 default:
-                    employeeQuery = employeeQuery.OrderBy(s => s.Name);
                     break;
             }
 
@@ -107,6 +115,24 @@ namespace CRUDOperationProject.Controllers
             return View();
 
         }
+
+        public IActionResult View(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            Employee? employee = _context.Employees.FirstOrDefault(x => x.Id == id);
+            if (employee == null)
+            {
+                return NotFound();
+
+            }
+
+            return View(employee);
+
+        }
+        
         public IActionResult Delete(int? id)
         {
             if (id == null || id == 0)

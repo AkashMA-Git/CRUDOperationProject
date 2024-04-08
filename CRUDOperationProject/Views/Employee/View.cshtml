@@ -1,0 +1,24 @@
+﻿@model Employee
+
+<div class="container mt-4">
+    <h4 class="text-primary mb-4"> Employee View</h4>
+
+    <div class="card">
+        <div class="card-body">
+
+            <div class="mb-3">
+                <h5 class="card-title">@Model.Name</h5>
+                <p class="card-text">@Model.Description</p>
+            </div>
+
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Email:</strong> @Model.Email</li>
+                <li class="list-group-item"><strong>Date of Birth:</strong> @Model.DateOfBirth</li>
+                <li class="list-group-item"><strong>Gender:</strong> @Model.Gender</li>
+                <li class="list-group-item"><strong>Department:</strong> @Model.Department</li>
+            </ul>
+
+            <a asp-controller="Employee" asp-action="Index" class="btn btn-outline-secondary mt-3">Back to List</a>
+        </div>
+    </div>
+</div>
