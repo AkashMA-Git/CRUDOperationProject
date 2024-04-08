@@ -1,4 +1,4 @@
-# ASP.NET CRUD Operation Project
+# ASP.NET Employee Management Project
 
 A simple ASP.NET MVC/Core project demonstrating CRUD operations on the Employee entity.
 
